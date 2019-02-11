@@ -122,7 +122,7 @@ def main():
     # create model
     print("=> creating model")
 
-    dpsnet = PSNet(args.nlabel, args.mindepth).cuda()
+    dpsnet = PSNet(args.nlabel, args.mindepth)
 
     if args.pretrained_dps:
         print("=> using pre-trained weights for DPSNet")
@@ -190,12 +190,12 @@ def train(args, train_loader, dpsnet, optimizer, epoch_size, train_writer):
     for i, (tgt_img, ref_imgs, ref_poses, intrinsics, intrinsics_inv, tgt_depth) in enumerate(train_loader):
         # measure data loading time
         data_time.update(time.time() - end)
-        tgt_img_var = Variable(tgt_img.cuda())
-        ref_imgs_var = [Variable(img.cuda()) for img in ref_imgs]
-        ref_poses_var = [Variable(pose.cuda()) for pose in ref_poses]
-        intrinsics_var = Variable(intrinsics.cuda())
-        intrinsics_inv_var = Variable(intrinsics_inv.cuda())
-        tgt_depth_var = Variable(tgt_depth.cuda()).cuda()
+        tgt_img_var = Variable(tgt_img)
+        ref_imgs_var = [Variable(img) for img in ref_imgs]
+        ref_poses_var = [Variable(pose) for pose in ref_poses]
+        intrinsics_var = Variable(intrinsics)
+        intrinsics_inv_var = Variable(intrinsics_inv)
+        tgt_depth_var = Variable(tgt_depth)
 
         # compute output
         pose = torch.cat(ref_poses_var,1)
@@ -274,12 +274,12 @@ def validate_with_gt(args, val_loader, dpsnet, epoch, output_writers=[]):
 
     end = time.time()
     for i, (tgt_img, ref_imgs, ref_poses, intrinsics, intrinsics_inv, tgt_depth) in enumerate(val_loader):
-        tgt_img_var = Variable(tgt_img.cuda(), volatile=True)
-        ref_imgs_var = [Variable(img.cuda(), volatile=True) for img in ref_imgs]
-        ref_poses_var = [Variable(pose.cuda(), volatile=True) for pose in ref_poses]
-        intrinsics_var = Variable(intrinsics.cuda(), volatile=True)
-        intrinsics_inv_var = Variable(intrinsics_inv.cuda(), volatile=True)
-        tgt_depth_var = Variable(tgt_depth.cuda(), volatile=True)
+        tgt_img_var = Variable(tgt_img, volatile=True)
+        ref_imgs_var = [Variable(img, volatile=True) for img in ref_imgs]
+        ref_poses_var = [Variable(pose, volatile=True) for pose in ref_poses]
+        intrinsics_var = Variable(intrinsics, volatile=True)
+        intrinsics_inv_var = Variable(intrinsics_inv, volatile=True)
+        tgt_depth_var = Variable(tgt_depth, volatile=True)
 
         pose = torch.cat(ref_poses_var,1)
 

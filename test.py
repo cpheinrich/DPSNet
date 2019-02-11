@@ -7,7 +7,7 @@ import csv
 import numpy as np
 import torch
 from torch.autograd import Variable
-import torch.backends.cudnn as cudnn
+#import torch.backends.cudnn as cudnn
 import torch.optim
 import torch.nn as nn
 import torch.nn.functional as F
@@ -64,8 +64,8 @@ def main():
         val_set, batch_size=args.batch_size, shuffle=False,
         num_workers=args.workers, pin_memory=True)
 
-    dpsnet = PSNet(args.nlabel, args.mindepth).cuda()
-    weights = torch.load(args.pretrained_dps)
+    dpsnet = PSNet(args.nlabel, args.mindepth) 
+    weights = torch.load(args.pretrained_dps, map_location='cpu')
     dpsnet.load_state_dict(weights['state_dict'])
     dpsnet.eval()
 
@@ -77,12 +77,12 @@ def main():
     for ii, (tgt_img, ref_imgs, ref_poses, intrinsics, intrinsics_inv, tgt_depth) in enumerate(val_loader):
         if ii % args.print_freq == 0:
             i = int(ii / args.print_freq)
-            tgt_img_var = Variable(tgt_img.cuda(), volatile=True)
-            ref_imgs_var = [Variable(img.cuda(), volatile=True) for img in ref_imgs]
-            ref_poses_var = [Variable(pose.cuda(), volatile=True) for pose in ref_poses]
-            intrinsics_var = Variable(intrinsics.cuda(), volatile=True)
-            intrinsics_inv_var = Variable(intrinsics_inv.cuda(), volatile=True)
-            tgt_depth_var = Variable(tgt_depth.cuda(), volatile=True)
+            tgt_img_var = Variable(tgt_img , volatile=True)
+            ref_imgs_var = [Variable(img , volatile=True) for img in ref_imgs]
+            ref_poses_var = [Variable(pose , volatile=True) for pose in ref_poses]
+            intrinsics_var = Variable(intrinsics , volatile=True)
+            intrinsics_inv_var = Variable(intrinsics_inv , volatile=True)
+            tgt_depth_var = Variable(tgt_depth , volatile=True)
 
             # compute output
             pose = torch.cat(ref_poses_var,1)

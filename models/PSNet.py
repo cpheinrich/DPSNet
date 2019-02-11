@@ -91,9 +91,9 @@ class PSNet(nn.Module):
 
         refimg_fea     = self.feature_extraction(ref)
 
-        disp2depth = Variable(torch.ones(refimg_fea.size(0), refimg_fea.size(2), refimg_fea.size(3))).cuda() * self.mindepth * self.nlabel
+        disp2depth = Variable(torch.ones(refimg_fea.size(0), refimg_fea.size(2), refimg_fea.size(3)))   * self.mindepth * self.nlabel
         for j, target in enumerate(targets):
-            cost = Variable(torch.FloatTensor(refimg_fea.size()[0], refimg_fea.size()[1]*2, self.nlabel,  refimg_fea.size()[2],  refimg_fea.size()[3]).zero_()).cuda()
+            cost = Variable(torch.FloatTensor(refimg_fea.size()[0], refimg_fea.size()[1]*2, self.nlabel,  refimg_fea.size()[2],  refimg_fea.size()[3]).zero_())  
             targetimg_fea  = self.feature_extraction(target)
             for i in range(self.nlabel):
                 depth = torch.div(disp2depth, i+1e-16)
@@ -116,7 +116,7 @@ class PSNet(nn.Module):
 
         costs = costs/len(targets)
 
-        costss = Variable(torch.FloatTensor(refimg_fea.size()[0], 1, self.nlabel,  refimg_fea.size()[2],  refimg_fea.size()[3]).zero_()).cuda()
+        costss = Variable(torch.FloatTensor(refimg_fea.size()[0], 1, self.nlabel,  refimg_fea.size()[2],  refimg_fea.size()[3]).zero_())  
         for i in range(self.nlabel):
             costt = costs[:, :, i, :, :]
             costss[:, :, i, :, :] = self.convs(torch.cat([refimg_fea, costt],1)) + costt
